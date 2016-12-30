@@ -1,5 +1,6 @@
 package com.summerlab.gotittest.model.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,10 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.summerlab.gotittest.R;
-import com.summerlab.gotittest.model.Question;
+import com.summerlab.gotittest.model.QuestionResponse;
+import com.summerlab.gotittest.utils.Utilities;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -19,10 +22,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.MyViewHolder> {
 
-    private ArrayList<Question> questionList;
+    private final Context mContext;
+    private List<QuestionResponse> questionResponseList;
 
-    public QuestionAdapter(ArrayList<Question> list) {
-        this.questionList = list;
+    public QuestionAdapter(Context context, List<QuestionResponse> list) {
+        this.mContext = context;
+        this.questionResponseList = list;
     }
 
     @Override
@@ -34,24 +39,29 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Question question = questionList.get(position);
+        QuestionResponse questionResponse = questionResponseList.get(position);
         //TODO bind Data
 
+        holder.tvTitle.setText(questionResponse.getTitle());
+        holder.tvTag.setText(questionResponse.getProcessing_status());
 
+        long time = questionResponse.getUpdated();
+        holder.tvTime.setText(Utilities.getTimeAgo(time));
 
-
+        ImageLoader.getInstance().displayImage(questionResponse.getAuthor().getAvatar(), holder.imgAvatar, Utilities.getDisplayOptions());
+        ImageLoader.getInstance().displayImage(questionResponse.getAttachments().get(0).getUrl(), holder.imgAttachment, Utilities.getDisplayOptions());
     }
 
     @Override
     public int getItemCount() {
-        return questionList.size();
+        return questionResponseList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView imgAttachment;
         public CircleImageView imgAvatar;
-        public TextView tvTitle, tvTime;
+        public TextView tvTitle, tvTime, tvTag;
 
         public MyViewHolder(View view) {
             super(view);
@@ -60,6 +70,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.MyView
 
             tvTime = (TextView) view.findViewById(R.id.tv_time);
             tvTitle = (TextView) view.findViewById(R.id.tv_title);
+            tvTag = (TextView) view.findViewById(R.id.tv_tag);
 
         }
     }

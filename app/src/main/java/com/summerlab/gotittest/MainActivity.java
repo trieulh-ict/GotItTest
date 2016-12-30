@@ -10,39 +10,48 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.summerlab.gotittest.controller.QuestionController;
-import com.summerlab.gotittest.model.Question;
-import com.summerlab.gotittest.utils.LogUtils;
-import com.summerlab.gotittest.utils.Utilities;
-import com.summerlab.gotittest.utils.networkutils.NetworkUtils;
+import com.summerlab.gotittest.model.QuestionResponse;
+import com.summerlab.gotittest.model.adapter.QuestionAdapter;
+import com.summerlab.gotittest.utils.rest.ApiClient;
+import com.summerlab.gotittest.utils.rest.ApiInterface;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SharedPreferences mRef;
-    private QuestionController mQuestionController;
-    private RecyclerView listQuestions;
+    private RecyclerView listQuestionsView;
+
+    private ApiInterface apiService;
+
+    private QuestionAdapter mQuestionAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        initView();
+
+        initData();
+    }
+
+    private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -64,38 +73,34 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        initView();
-
-        initData();
-    }
-
-    private void initView() {
-        listQuestions = (RecyclerView) findViewById(R.id.list_questions);
+        listQuestionsView = (RecyclerView) findViewById(R.id.list_questions);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        listQuestionsView.setLayoutManager(mLayoutManager);
+        listQuestionsView.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void initData() {
-        mQuestionController = new QuestionController(this);
+        getQuestions();
+    }
 
-        try {
-            mQuestionController.getQuestions(new NetworkUtils.NetworkListener() {
-                @Override
-                public void onSuccess(JSONObject jsonResponse) {
-                    LogUtils.d("trieulh", "SUCCESS");
-                }
+    private void getQuestions() {
+        Call<List<QuestionResponse>> call = apiService.getQuestions();
 
-                @Override
-                public void onError(VolleyError volleyError) {
-                    LogUtils.d("trieulh", "ERROR");
+        call.enqueue(new Callback<List<QuestionResponse>>() {
+            @Override
+            public void onResponse(Call<List<QuestionResponse>> call, Response<List<QuestionResponse>> response) {
+                if (response.isSuccessful()) {
+                    List<QuestionResponse> questions = response.body();
+                    mQuestionAdapter = new QuestionAdapter(getApplicationContext(), questions);
+                    listQuestionsView.setAdapter(mQuestionAdapter);
                 }
+            }
 
-                @Override
-                public void onSuccess(JSONArray jsonObject) {
-                    parseQuestionList(jsonObject);
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(Call<List<QuestionResponse>> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
@@ -147,24 +152,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void logOut() {
-
-        //TODO Call Logout API
-
-        //
-
         mRef = getSharedPreferences("GotItTest", MODE_PRIVATE);
         SharedPreferences.Editor editor = mRef.edit();
         editor.putString("AUTH_KEY", "");
         editor.commit();
         startActivity(new Intent(this, LoginActivity.class));
-    }
-
-    private void parseQuestionList(JSONArray jsonObject) {
-        Gson gson = Utilities.getGSON();
-        Type listType = new TypeToken<ArrayList<Question>>() {
-        }.getType();
-        ArrayList<Question> questionList = gson.fromJson(jsonObject.toString(), listType);
-
-        LogUtils.d("trieulh", "Size " + questionList.size());
     }
 }

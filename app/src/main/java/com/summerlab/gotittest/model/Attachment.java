@@ -1,11 +1,14 @@
 package com.summerlab.gotittest.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import io.realm.RealmObject;
 
 /**
  * Created by trieulh on 12/30/16.
  */
-public class Attachment extends RealmObject{
+public class Attachment {
+    @SerializedName("url")
     private String url;
 
     public String getUrl() {

@@ -1,5 +1,7 @@
 package com.summerlab.gotittest.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
 
@@ -10,17 +12,25 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by trieulh on 12/30/16.
  */
-public class Question extends RealmObject {
-    @PrimaryKey
+public class QuestionResponse{
+    @SerializedName("qid")
     private int qid;
 
+    @SerializedName("title")
     private String title;
-    private int tid,processing_status;
+    @SerializedName("tid")
+    private int tid;
+    @SerializedName("processing_status")
+    private int processing_status;
+    @SerializedName("processing_data")
     private ProcessingData processing_data;
-    private String created,updated;
+    @SerializedName("created")
+    private long created;
+    @SerializedName("updated")
+    private long updated;
+    @SerializedName("author")
     private Author author;
-
-    @Ignore
+    @SerializedName("attachments")
     public List<Attachment> attachments;
 
 
@@ -48,8 +58,15 @@ public class Question extends RealmObject {
         this.tid = tid;
     }
 
-    public int getProcessing_status() {
-        return processing_status;
+    public String getProcessing_status() {
+        switch (processing_status){
+            case 5:
+                return "Answered";
+            case 6:
+                return "Dead";
+            default:
+                return "Wrong Status";
+        }
     }
 
     public void setProcessing_status(int processing_status) {
@@ -80,19 +97,19 @@ public class Question extends RealmObject {
         this.attachments = attachments;
     }
 
-    public String getCreated() {
+    public long getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(long created) {
         this.created = created;
     }
 
-    public String getUpdated() {
+    public long getUpdated() {
         return updated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(long updated) {
         this.updated = updated;
     }
 }

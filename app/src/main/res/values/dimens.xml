@@ -9,4 +9,5 @@
     <dimen name="margin_small">5dp</dimen>
     <dimen name="margin_default">24dp</dimen>
     <dimen name="ava_size">48dp</dimen>
+    <dimen name="attachment_height">200dp</dimen>
 </resources>

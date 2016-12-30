@@ -1,16 +1,20 @@
 package com.summerlab.gotittest.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by trieulh on 12/30/16.
  */
-public class ProcessingData extends RealmObject {
-    @PrimaryKey
+public class ProcessingData{
+    @SerializedName("uid")
     private int uid;
-
-    private String orig_name,avatar;
+    @SerializedName("orig_name")
+    private String orig_name;
+    @SerializedName("avatar")
+    private String avatar;
 
     public int getUid() {
         return uid;

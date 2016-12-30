@@ -10,14 +10,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
-import com.summerlab.gotittest.controller.UserController;
 import com.summerlab.gotittest.utils.LogUtils;
-import com.summerlab.gotittest.utils.networkutils.NetworkUtils;
+import com.summerlab.gotittest.utils.rest.ApiClient;
+import com.summerlab.gotittest.utils.rest.ApiInterface;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -26,15 +33,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText etEmail;
     private EditText etPassword;
 
-    private UserController mUserController;
     private SharedPreferences mRef;
+
+    private ApiInterface apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mUserController = new UserController(this);
+        apiService = ApiClient.getClient().create(ApiInterface.class);
 
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -63,39 +71,41 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void logIn() {
-        String email = etEmail.getText().toString();
-        String password = etPassword.getText().toString();
-        try {
-            mUserController.logInUser(email, password, new NetworkUtils.NetworkListener() {
-                @Override
-                public void onSuccess(JSONObject jsonResponse) {
-                    Toast.makeText(getApplicationContext(), "SUCCESS", Toast.LENGTH_LONG).show();
+        RequestBody email = RequestBody.create(MediaType.parse("text/plain"), etEmail.getText().toString());
+        RequestBody password = RequestBody.create(MediaType.parse("text/plain"), etPassword.getText().toString());
+
+        Call<ResponseBody> call = apiService.logIn(email, password);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
                     try {
+                        JSONObject json = new JSONObject(response.body().string());
+                        LogUtils.d("trieulh", json.getString("auth"));
                         mRef = getSharedPreferences("GotItTest", MODE_PRIVATE);
                         SharedPreferences.Editor editor = mRef.edit();
-                        editor.putString("AUTH_KEY", jsonResponse.getString("auth"));
+                        editor.putString("AUTH_KEY", json.getString("auth"));
                         editor.commit();
+
+                        Toast.makeText(getApplicationContext(), "Login successfully", Toast.LENGTH_LONG).show();
+
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                } else {
+                    Toast.makeText(getApplicationContext(), "Wrong User & Password", Toast.LENGTH_LONG).show();
                 }
+            }
 
-                @Override
-                public void onError(VolleyError volleyError) {
-                    Toast.makeText(getApplicationContext(), "Wrong Username & Password", Toast.LENGTH_LONG).show();
-                }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                @Override
-                public void onSuccess(JSONArray jsonObject) {
-
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+            }
+        });
     }
 }
