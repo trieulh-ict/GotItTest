@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +12,7 @@ import android.widget.Toast;
 import com.summerlab.gotittest.utils.LogUtils;
 import com.summerlab.gotittest.utils.rest.ApiClient;
 import com.summerlab.gotittest.utils.rest.ApiInterface;
+import com.summerlab.gotittest.utils.rest.CustomCall;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,10 +23,9 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private ActionBar mActionBar;
     private Button btnLogin;
@@ -76,9 +75,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         Call<ResponseBody> call = apiService.logIn(email, password);
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new CustomCall<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                super.onResponse(call, response);
                 if (response.isSuccessful()) {
                     try {
                         JSONObject json = new JSONObject(response.body().string());
@@ -97,9 +97,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Wrong User & Password", Toast.LENGTH_LONG).show();
                 }
+            }
+
+            @Override
+            protected void showDialog() {
+                showMaintainDialog();
             }
 
             @Override

@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,16 +19,17 @@ import android.view.View;
 
 import com.summerlab.gotittest.model.QuestionResponse;
 import com.summerlab.gotittest.model.adapter.QuestionAdapter;
+import com.summerlab.gotittest.utils.LogUtils;
 import com.summerlab.gotittest.utils.rest.ApiClient;
 import com.summerlab.gotittest.utils.rest.ApiInterface;
+import com.summerlab.gotittest.utils.rest.CustomCall;
 
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SharedPreferences mRef;
@@ -84,11 +84,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getQuestions() {
-        Call<List<QuestionResponse>> call = apiService.getQuestions();
+        mRef = getSharedPreferences("GotItTest", MODE_PRIVATE);
+        Call<List<QuestionResponse>> call = apiService.getQuestions(mRef.getString("AUTH_KEY", ""));
 
-        call.enqueue(new Callback<List<QuestionResponse>>() {
+        call.enqueue(new CustomCall<List<QuestionResponse>>() {
             @Override
             public void onResponse(Call<List<QuestionResponse>> call, Response<List<QuestionResponse>> response) {
+                super.onResponse(call, response);
+                LogUtils.d("trieulh", "Response" + response.code() + "");
                 if (response.isSuccessful()) {
                     List<QuestionResponse> questions = response.body();
                     mQuestionAdapter = new QuestionAdapter(getApplicationContext(), questions);
@@ -97,8 +100,13 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onFailure(Call<List<QuestionResponse>> call, Throwable t) {
+            protected void showDialog() {
+                showMaintainDialog();
+            }
 
+            @Override
+            public void onFailure(Call<List<QuestionResponse>> call, Throwable t) {
+                LogUtils.d("trieulh", "Fail");
             }
         });
     }
