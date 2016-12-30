@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">GotitTest</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="btn_fb_login">LOGIN WITH FACEBOOK</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="log_in">LOGIN</string>
+    <string name="intro_splash">by signing up you agree to our terms of service</string>
+    <string name="OK">OK</string>
+    <string name="Cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="network_error_msg">Network Error</string>
+    <string name="on_progress">On Progress</string>
+    <string name="label_email">Email Address</string>
+    <string name="label_password">Password</string>
+    <string name="hint_email">name@domain.com</string>
+    <string name="hint_password">your password</string>
+    <string name="intro_forgot_pass">Forgot Password? Click Here</string>
+</resources>

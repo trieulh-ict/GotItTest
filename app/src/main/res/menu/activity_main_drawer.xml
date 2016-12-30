@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="ASK AN EXPERT" />
+
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="My History" />
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Live Feed" />
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Notifications" />
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Send Feedback" />
+        <item
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Ask for Credits" />
+        <item
+            android:id="@+id/id_logout"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Log out" />
+    </group>
+
+</menu>
