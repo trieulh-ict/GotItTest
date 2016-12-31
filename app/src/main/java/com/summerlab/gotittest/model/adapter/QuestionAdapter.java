@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.summerlab.gotittest.R;
 import com.summerlab.gotittest.model.QuestionResponse;
 import com.summerlab.gotittest.utils.Utilities;
@@ -48,8 +48,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.MyView
         long time = questionResponse.getUpdated();
         holder.tvTime.setText(Utilities.getTimeAgo(time));
 
-        ImageLoader.getInstance().displayImage(questionResponse.getAuthor().getAvatar(), holder.imgAvatar, Utilities.getDisplayOptions());
-        ImageLoader.getInstance().displayImage(questionResponse.getAttachments().get(0).getUrl(), holder.imgAttachment, Utilities.getDisplayOptions());
+        Glide.with(mContext).load(questionResponse.getAuthor().getAvatar()).into(holder.imgAvatar);
+        Glide.with(mContext).load(questionResponse.getAttachments().get(0).getUrl()).into(holder.imgAttachment);
     }
 
     @Override

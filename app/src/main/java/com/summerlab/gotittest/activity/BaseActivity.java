@@ -1,8 +1,10 @@
-package com.summerlab.gotittest;
+package com.summerlab.gotittest.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
+
+import com.summerlab.gotittest.R;
 
 /**
  * Created by trieulh on 12/31/16.

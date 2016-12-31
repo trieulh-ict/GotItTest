@@ -1,14 +1,16 @@
-package com.summerlab.gotittest;
+package com.summerlab.gotittest.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.summerlab.gotittest.R;
 import com.summerlab.gotittest.utils.LogUtils;
 import com.summerlab.gotittest.utils.rest.ApiClient;
 import com.summerlab.gotittest.utils.rest.ApiInterface;
@@ -67,6 +69,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, SplashActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+        }
+        return true;
     }
 
     private void logIn() {

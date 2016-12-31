@@ -1,4 +1,4 @@
-package com.summerlab.gotittest;
+package com.summerlab.gotittest.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.summerlab.gotittest.R;
 import com.summerlab.gotittest.model.QuestionResponse;
 import com.summerlab.gotittest.model.adapter.QuestionAdapter;
 import com.summerlab.gotittest.utils.LogUtils;

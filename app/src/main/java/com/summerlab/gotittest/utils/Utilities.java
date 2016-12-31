@@ -1,9 +1,5 @@
 package com.summerlab.gotittest.utils;
 
-import android.graphics.Bitmap;
-
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-
 /**
  * Created by trieulh on 12/30/16.
  */
@@ -12,20 +8,6 @@ public class Utilities {
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
-
-    private static DisplayImageOptions mDisplayImageOptions;
-
-    public static DisplayImageOptions getDisplayOptions() {
-        if (mDisplayImageOptions == null) {
-            mDisplayImageOptions = new DisplayImageOptions.Builder()
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .considerExifParams(true)
-                    .bitmapConfig(Bitmap.Config.ARGB_8888)
-                    .build();
-        }
-        return mDisplayImageOptions;
-    }
 
     public static String getTimeAgo(long time) {
         long now = System.currentTimeMillis();
